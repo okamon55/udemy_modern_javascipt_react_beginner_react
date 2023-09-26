@@ -3,11 +3,21 @@ import { useState } from "react";
 import "./styles.css";
 
 import { InputTodo } from "./components/InputTodo";
+import { IncompleteTodos } from "./components/IncompleteTodos";
+import { CompleteTodos } from "./components/CompleteTodos";
+
+// CSS in JS
+const style = {
+  color: "red",
+  margin: "8px",
+};
 
 export const App = () => {
   const [todoText, setTodoText] = useState("");
   const [incompleteTodos, setIncompleteTodos] = useState([]);
   const [completeTodos, setCompleteTodos] = useState([]);
+  const todoMaxCount = 5;
+  const isTodoMax = incompleteTodos.length >= todoMaxCount;
 
   const onChangeInputTodo = (event) => {
     setTodoText(event.target.value);
@@ -59,11 +69,14 @@ export const App = () => {
           placeholder="Todoを入力してください"
           value={todoText}
           onChange={onChangeInputTodo}
+          disabled={isTodoMax}
         />
-        <button type="button" onClick={onClickAddTodo}>
+        <button type="button" onClick={onClickAddTodo} disabled={isTodoMax}>
           追加
         </button>
       </div>
+
+      {isTodoMax && <p style={style}>Todoは{todoMaxCount}個が上限です。</p>}
 
       {/* 未完了Todo一覧 */}
       <div className="incomplete-area">
@@ -117,6 +130,20 @@ export const App = () => {
         text={todoText}
         onChange={onChangeInputTodo}
         onClick={onClickAddTodo}
+        disabled={isTodoMax}
+      />
+      {isTodoMax && <p style={style}>Todoは{todoMaxCount}個が上限です。</p>}
+      {/* 未完了Todo一覧 */}
+      <IncompleteTodos
+        incompleteTodos={incompleteTodos}
+        onClickCompleteTodo={onClickCompleteTodo}
+        onClickDeleteTodo={onClickDeleteTodo}
+      />
+
+      {/* 完了Todo一覧 */}
+      <CompleteTodos
+        completeTodos={completeTodos}
+        onClickBackTodo={onClickBackTodo}
       />
     </>
   );
